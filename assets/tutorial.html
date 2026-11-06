@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Como usar o painel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f2f2ef; --surface:#fcfcfb; --border:#e4e3de; --text:#0b0b0b; --text-2:#52514e; --muted:#7c7b76;
+  --s1:#2a78d6; --chip:#e8f0fb; --chip-text:#1c5cab; --hero:#0f1b2e; --hero-2:#16263f; --hero-text:#f4f6fa; --hero-muted:#a9b4c6;
+  --shadow:0 1px 2px rgba(15,27,46,.04), 0 6px 18px rgba(15,27,46,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#111110; --surface:#1a1a19; --border:#2e2e2b; --text:#f0efec; --text-2:#c3c2b7; --muted:#8f8e86;
+    --s1:#3987e5; --chip:#1b2c44; --chip-text:#9ec5f4; --hero:#0c1626; --hero-2:#13223a; --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#111110; --surface:#1a1a19; --border:#2e2e2b; --text:#f0efec; --text-2:#c3c2b7; --muted:#8f8e86;
+  --s1:#3987e5; --chip:#1b2c44; --chip-text:#9ec5f4; --hero:#0c1626; --hero-2:#13223a; --shadow:0 1px 2px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:14px;-webkit-font-smoothing:antialiased}
+.app{max-width:1480px;margin:0 auto;padding:18px 24px 40px}
+.top{position:relative;overflow:hidden;border-radius:20px;padding:30px 30px 28px;color:var(--hero-text);
+  background:radial-gradient(1200px 300px at 85% -40%, rgba(57,135,229,.35), transparent 60%), linear-gradient(135deg,var(--hero),var(--hero-2))}
+.top::after{content:"";position:absolute;right:-60px;bottom:-90px;width:280px;height:280px;border-radius:50%;border:38px solid rgba(255,255,255,.035)}
+.brand{display:flex;gap:16px;align-items:center;position:relative;z-index:1}
+.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;flex:0 0 48px;
+  background:linear-gradient(140deg,#3987e5,#1c5cab);box-shadow:0 6px 20px rgba(57,135,229,.35)}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--hero-muted);font-weight:600}
+h1{margin:2px 0 6px;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.top p{margin:0;color:var(--hero-muted);font-size:13.5px;max-width:760px;line-height:1.55}
+.up{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:12.5px;color:var(--hero-text);font-weight:600;position:relative;z-index:1}
+.up svg{animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion: reduce){.up svg{animation:none}}
+
+h2{font-size:15px;font-weight:700;margin:26px 0 12px;letter-spacing:-.01em}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.n{width:30px;height:30px;border-radius:10px;background:var(--s1);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+.step h3{margin:12px 0 6px;font-size:14.5px;font-weight:700}
+.step p{margin:0;color:var(--text-2);font-size:13px;line-height:1.55}
+.step code{background:var(--chip);color:var(--chip-text);padding:1px 6px;border-radius:6px;font-size:12px;font-family:inherit;font-weight:600}
+
+.feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px;display:flex;gap:12px}
+.ic{flex:0 0 32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--chip);color:var(--chip-text)}
+.feat b{display:block;font-size:13px;margin-bottom:3px}
+.feat span{font-size:12.5px;color:var(--text-2);line-height:1.5}
+.feat.star{border-color:color-mix(in srgb,var(--s1) 45%,var(--border));background:linear-gradient(160deg,color-mix(in srgb,var(--s1) 8%,var(--surface)),var(--surface))}
+
+.tips{display:flex;flex-wrap:wrap;gap:8px}
+.tip{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:7px 13px;font-size:12.5px;color:var(--text-2)}
+.tip b{color:var(--text)}
+.foot{margin-top:22px;font-size:11.5px;color:var(--muted)}
+@media (max-width:1100px){.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.steps,.feats{grid-template-columns:1fr}.app{padding:12px 16px 28px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12"/><path d="M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/><path d="M7 7h4v4H7z"/></svg>
+      </div>
+      <div>
+        <div class="eyebrow">LCM Construção · Suprimentos</div>
+        <h1>Painel de Compras por Insumo</h1>
+        <p>Analise quanto se gastou, quanto se comprou e quanto se pagou por unidade de qualquer insumo — por estado, obra, fornecedor e mês. Os dados vêm do histórico de compras do UAU.</p>
+      </div>
+    </div>
+    <div class="up">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      Use a barra acima para escolher o que analisar e clique em <span style="background:#2a78d6;padding:3px 10px;border-radius:7px;margin-left:2px">Carregar</span>
+    </div>
+  </header>
+
+  <h2>Como começar</h2>
+  <section class="steps">
+    <div class="step"><div class="n">1</div><h3>Escolha os insumos</h3>
+      <p>Em <b>Buscar insumo</b>, digite parte do código ou da descrição (ex.: <code>diesel</code>, <code>COMBU</code>) e marque na lista. <b>Marcar todos</b> marca todos os resultados de uma vez. Dá para buscar de novo e ir somando insumos.</p></div>
+    <div class="step"><div class="n">2</div><h3>Defina o período</h3>
+      <p>Escolha a data inicial e a final no campo <b>Período</b>. O filtro usa a <b>data da cotação</b>. Períodos maiores levam um pouco mais para carregar.</p></div>
+    <div class="step"><div class="n">3</div><h3>Clique em Carregar</h3>
+      <p>O painel consulta o UAU e monta as análises. Para trocar insumo ou período, ajuste a barra e clique em <b>Carregar</b> de novo.</p></div>
+  </section>
+
+  <h2>O que você vai encontrar</h2>
+  <section class="feats">
+    <div class="feat star"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+      <div><b>Ranking por estado</b><span>Mapa do Brasil e barras com gasto, volume ou preço médio por UF da obra ou do fornecedor.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+      <div><b>Evolução mensal</b><span>Gasto por mês e preço médio com a faixa do menor ao maior preço pago.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M4 12h16M4 18h7"/></svg></div>
+      <div><b>Comparativo de insumos</b><span>Com mais de um insumo: gasto de cada um e preço médio mês a mês, lado a lado.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13"/></svg></div>
+      <div><b>Obras e fornecedores</b><span>Top 10 de cada, com participação no total. Clique para filtrar.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div><b>Economia potencial</b><span>Quanto se pagou acima do menor preço do mesmo insumo, na mesma UF e mês.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="7" width="15" height="11" rx="1"/><path d="M16 11h4l3 3v4h-7"/><circle cx="6" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/></svg></div>
+      <div><b>Frete CIF × FOB</b><span>Preço médio e volume em cada modalidade de frete.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div><b>Compras de outra UF</b><span>Quanto veio de fornecedores fora do estado da obra.</span></div></div>
+    <div class="feat"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M3 12h18M3 19h18"/></svg></div>
+      <div><b>Detalhamento</b><span>Todas as compras com busca, ordenação e exportação para CSV.</span></div></div>
+  </section>
+
+  <h2>Dicas</h2>
+  <section class="tips">
+    <div class="tip">Clique em um <b>estado no mapa</b> para filtrar o painel inteiro</div>
+    <div class="tip">Os <b>filtros do painel</b> (obra, fornecedor, frete, meses) não refazem a consulta — são instantâneos</div>
+    <div class="tip">Passe o mouse nos gráficos para ver os <b>detalhes</b></div>
+    <div class="tip">Botão <b>Tema</b> alterna claro e escuro</div>
+  </section>
+
+  <div class="foot">Fonte configurada: {{FONTE}}</div>
+</div>
+</body>
+</html>

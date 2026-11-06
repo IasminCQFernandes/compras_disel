@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Compras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" crossorigin="anonymous">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f2f2ef; --surface:#fcfcfb; --surface-2:#ffffff; --border:#e4e3de; --grid:#ecebe7;
+  --text:#0b0b0b; --text-2:#52514e; --muted:#7c7b76;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --seq0:#cde2fb; --seq1:#86b6ef; --seq2:#3987e5; --seq3:#1c5cab; --seq4:#0d366b;
+  --empty:#e7e6e1; --chip:#e8f0fb; --chip-text:#1c5cab;
+  --hero:#0f1b2e; --hero-2:#16263f; --hero-text:#f4f6fa; --hero-muted:#a9b4c6;
+  --good:#0ca30c; --critical:#d03b3b;
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300; --c7:#6250d6; --c8:#e34948;
+  --warn-bg:#fff6e0; --warn-text:#7a5200;
+  --shadow:0 1px 2px rgba(15,27,46,.04), 0 6px 18px rgba(15,27,46,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#111110; --surface:#1a1a19; --surface-2:#222220; --border:#2e2e2b; --grid:#272725;
+    --text:#f0efec; --text-2:#c3c2b7; --muted:#8f8e86;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+    --seq0:#173a66; --seq1:#1c5cab; --seq2:#3987e5; --seq3:#86b6ef; --seq4:#cde2fb;
+    --empty:#2a2a28; --chip:#1b2c44; --chip-text:#9ec5f4;
+    --hero:#0c1626; --hero-2:#13223a; --hero-text:#f4f6fa; --hero-muted:#9aa6ba;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+    --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300; --c7:#9085e9; --c8:#e66767;
+    --warn-bg:#2e2510; --warn-text:#f2c96b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#111110; --surface:#1a1a19; --surface-2:#222220; --border:#2e2e2b; --grid:#272725;
+  --text:#f0efec; --text-2:#c3c2b7; --muted:#8f8e86;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --seq0:#173a66; --seq1:#1c5cab; --seq2:#3987e5; --seq3:#86b6ef; --seq4:#cde2fb;
+  --empty:#2a2a28; --chip:#1b2c44; --chip-text:#9ec5f4;
+  --hero:#0c1626; --hero-2:#13223a; --hero-text:#f4f6fa; --hero-muted:#9aa6ba;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300; --c7:#9085e9; --c8:#e66767;
+  --warn-bg:#2e2510; --warn-text:#f2c96b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;
+  -webkit-font-smoothing:antialiased}
+.num{font-variant-numeric:tabular-nums}
+.app{max-width:1480px;margin:0 auto;padding:20px 24px 40px}
+
+/* ---------- topo ---------- */
+.top{position:relative;overflow:hidden;border-radius:20px;padding:26px 28px 24px;
+  background:radial-gradient(1200px 300px at 85% -40%, rgba(57,135,229,.35), transparent 60%),
+             linear-gradient(135deg,var(--hero),var(--hero-2));
+  color:var(--hero-text);display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.top::after{content:"";position:absolute;right:-60px;bottom:-90px;width:280px;height:280px;border-radius:50%;
+  border:38px solid rgba(255,255,255,.035)}
+.brand{display:flex;gap:16px;align-items:center;position:relative;z-index:1}
+.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(140deg,#3987e5,#1c5cab);box-shadow:0 6px 20px rgba(57,135,229,.35)}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--hero-muted);font-weight:600}
+h1{margin:2px 0 4px;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.top p{margin:0;color:var(--hero-muted);font-size:13px}
+.top-actions{display:flex;gap:8px;position:relative;z-index:1}
+.icon-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--hero-text);
+  height:36px;padding:0 12px;border-radius:10px;cursor:pointer;font:inherit;font-size:12.5px;font-weight:600;
+  display:inline-flex;gap:8px;align-items:center}
+.icon-btn:hover{background:rgba(255,255,255,.12)}
+
+/* ---------- filtros ---------- */
+.filters{margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;box-shadow:var(--shadow)}
+.f{display:flex;flex-direction:column;gap:4px;min-width:120px}
+.f.grow{flex:1 1 170px}
+#boxIns{flex:1 1 150px}
+.f{flex:0 1 110px}
+.f label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+select,input[type=search]{appearance:none;-webkit-appearance:none;font:inherit;font-size:13px;color:var(--text);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;height:36px;padding:0 30px 0 11px;
+  outline:none;width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237c7b76' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center}
+input[type=search]{background-image:none;padding-right:11px}
+select:focus,input:focus{border-color:var(--s1);box-shadow:0 0 0 3px color-mix(in srgb,var(--s1) 20%,transparent)}
+.btn-ghost{height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-2);
+  font:inherit;font-size:13px;font-weight:600;padding:0 14px;cursor:pointer}
+.btn-ghost:hover{background:var(--surface-2);color:var(--text)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;width:100%}
+.chips:empty{display:none}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--chip);color:var(--chip-text);
+  border-radius:999px;padding:4px 6px 4px 11px;font-size:12px;font-weight:600}
+.chip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:14px;line-height:1;
+  width:18px;height:18px;border-radius:50%}
+.chip button:hover{background:color-mix(in srgb,var(--chip-text) 18%,transparent)}
+
+/* ---------- KPIs ---------- */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:16px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden}
+.kpi .lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:8px}
+.kpi .lbl i{width:8px;height:8px;border-radius:3px;background:var(--s1);display:inline-block}
+.kpi .val{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:8px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .val small{font-size:14px;font-weight:600;color:var(--text-2);margin-left:2px}
+.kpi .sub{font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.45}
+.kpi.accent{background:linear-gradient(160deg,color-mix(in srgb,var(--s3) 10%,var(--surface)),var(--surface))}
+.kpi.accent .lbl i{background:var(--s3)}
+.delta{font-weight:700}
+.delta.up{color:var(--critical)} .delta.down{color:var(--good)}
+
+/* ---------- insights ---------- */
+.insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px}
+.ins{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:13px 15px;font-size:13px;color:var(--text-2);line-height:1.45}
+.ins b{color:var(--text)}
+.ins .ic{flex:0 0 30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--chip);color:var(--chip-text)}
+
+/* ---------- cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin-top:16px;
+  box-shadow:var(--shadow);min-width:0}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.card h2{margin:0;font-size:16px;font-weight:700;letter-spacing:-.01em}
+.card .desc{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid2 > .card,.grid3 > .card{margin-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ch{width:100%;height:320px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:8px;align-items:stretch}
+#chMapa{height:520px} #chRankUF{height:520px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--chip-text);background:var(--chip);padding:3px 9px;border-radius:999px;margin-bottom:6px}
+
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:var(--text-2);
+  padding:6px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--surface-2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap}
+
+/* frete */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.cmp .side{border:1px solid var(--border);border-radius:14px;padding:14px;background:var(--surface-2)}
+.cmp .tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.cmp .tag i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.cmp .big{font-size:22px;font-weight:800;margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.cmp .small{font-size:12px;color:var(--text-2);line-height:1.6}
+.share{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:16px 0 6px;gap:2px}
+.share span{display:block;height:100%}
+.share-lg{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.callout{margin-top:14px;font-size:12.5px;color:var(--text-2);background:var(--bg);border-radius:12px;padding:10px 12px;line-height:1.5}
+.callout b{color:var(--text)}
+
+/* fluxos */
+.flows{display:flex;flex-direction:column;gap:9px;margin-top:8px}
+.flow{display:grid;grid-template-columns:86px 1fr 92px;gap:10px;align-items:center;font-size:12.5px}
+.flow .uf{font-weight:700;display:flex;gap:6px;align-items:center}
+.flow .uf span{color:var(--muted);font-weight:500}
+.flow .bar{height:8px;border-radius:0 4px 4px 0;background:var(--s1)}
+.flow .bar-bg{background:var(--grid);border-radius:4px;height:8px}
+.flow .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--text-2)}
+
+/* tabelas */
+.tbl-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px;margin-top:10px;max-height:560px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--grid);white-space:nowrap}
+th{position:sticky;top:0;background:var(--surface-2);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;cursor:pointer;user-select:none;z-index:1}
+th.r,td.r{text-align:right;font-variant-numeric:tabular-nums}
+th .arr{opacity:.7;margin-left:4px}
+tbody tr:hover td{background:color-mix(in srgb,var(--s1) 6%,transparent)}
+td.obra{max-width:250px;overflow:hidden;text-overflow:ellipsis}
+td.forn{max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--bg);color:var(--text-2)}
+.diff{color:var(--critical);font-weight:700}
+.tbl-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--muted);gap:10px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tools input{width:260px}
+.btn-pri{height:36px;border-radius:10px;border:0;background:var(--s1);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:0 14px;cursor:pointer}
+.btn-pri:hover{filter:brightness(1.08)}
+.aviso{display:flex;gap:10px;align-items:center;margin-top:12px;background:var(--warn-bg);color:var(--warn-text);
+  border-radius:12px;padding:10px 14px;font-size:12.5px;line-height:1.45}
+.aviso b{font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--text-2);margin:2px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.icon-btn-pri{background:#2a78d6;border-color:#2a78d6}
+.icon-btn-pri:hover{background:#3987e5}
+.icon-btn:disabled{opacity:.6;cursor:wait}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f1b2e;color:#f4f6fa;padding:11px 18px;
+  border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:50;display:none;align-items:center;gap:10px}
+.toast.on{display:flex}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+/* modo PDF: largura fixa, sem rolagens internas e sem controles */
+.pdf-mode .app{width:960px;max-width:none;margin:0;padding:18px 20px 20px}
+.pdf-only{display:none}
+.pdf-mode .pdf-only{display:block}
+.pdf-filtros{margin-top:12px;font-size:12px;color:var(--text-2);background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:9px 14px;line-height:1.5}
+.pdf-filtros b{color:var(--text)}
+.pdf-mode .kpi .val{font-size:22px}
+.pdf-mode .kpi{padding:14px 14px}
+.pdf-mode #tbOp{font-size:11px}
+.pdf-mode #tbOp th,.pdf-mode #tbOp td{padding:7px 6px}
+.pdf-mode #tbOp td.obra{max-width:200px}
+.pdf-mode #tbOp td.forn{max-width:150px}
+.pdf-mode .cmp{gap:8px}
+.pdf-mode .cmp .side{padding:10px}
+.pdf-mode .cmp .big{font-size:17px;white-space:nowrap}
+.pdf-mode .no-pdf{display:none !important}
+.pdf-mode .tbl-wrap{max-height:none !important;overflow:visible}
+.pdf-mode .kpis{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+.pdf-mode .insights{grid-template-columns:repeat(4,minmax(0,1fr)) !important}
+.pdf-mode .grid2{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+.pdf-mode .grid3{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+.pdf-mode .hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) !important}
+.pdf-mode .card,.pdf-mode .kpi,.pdf-mode .filters{box-shadow:none}
+.notes{margin-top:22px;font-size:11.5px;color:var(--muted);line-height:1.7}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+
+@media (max-width:1180px){ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} .insights{grid-template-columns:repeat(2,minmax(0,1fr))} .grid3{grid-template-columns:1fr 1fr} }
+@media (max-width:900px){ .hero-grid,.grid2,.grid3{grid-template-columns:1fr} #chMapa{height:420px} #chRankUF{height:460px} .kpis{grid-template-columns:1fr 1fr} }
+@media (max-width:560px){ .app{padding:12px 16px 28px} .kpis,.insights{grid-template-columns:1fr} .top{flex-direction:column} .tools input{width:100%} }
+</style>
+<script>/*__ECHARTS__*/</script>
+<script>/*__PDFLIBS__*/</script>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12"/><path d="M14 9h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V8l-3-3"/><path d="M7 7h4v4H7z"/></svg>
+      </div>
+      <div>
+        <div class="eyebrow">LCM Construção · Suprimentos</div>
+        <h1 id="titulo">Compras</h1>
+        <p id="sub">—</p>
+      </div>
+    </div>
+    <div class="top-actions no-pdf">
+      <button class="icon-btn icon-btn-pri" id="btnPdf" title="Baixar este painel em PDF (A4)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v6M9 15l3 3 3-3"/></svg>
+        <span>Baixar PDF</span>
+      </button>
+      <button class="icon-btn" id="btnXlsx" title="Baixar os dados da consulta em Excel (.xlsx)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        <span>Baixar Excel</span>
+      </button>
+      <button class="icon-btn" id="btnTema" title="Alternar tema">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>
+        <span>Tema</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="pdf-only pdf-filtros" id="pdfFiltros"></div>
+  <section class="filters no-pdf" aria-label="Filtros">
+    <div class="f grow" id="boxIns"><label for="fIns">Insumo</label><select id="fIns"></select></div>
+    <div class="f"><label for="fDe">De</label><select id="fDe"></select></div>
+    <div class="f"><label for="fAte">Até</label><select id="fAte"></select></div>
+    <div class="f"><label for="fUF">UF da obra</label><select id="fUF"></select></div>
+    <div class="f grow"><label for="fObra">Obra</label><select id="fObra"></select></div>
+    <div class="f grow"><label for="fForn">Fornecedor</label><select id="fForn"></select></div>
+    <div class="f"><label for="fFrete">Frete</label><select id="fFrete"><option value="">Todos</option><option value="CIF">CIF</option><option value="FOB">FOB</option></select></div>
+    <button class="btn-ghost" id="btnLimpar">Limpar filtros</button>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <div class="aviso" id="aviso" style="display:none"></div>
+  <section class="kpis" id="kpis"></section>
+  <section class="insights" id="insights"></section>
+
+  <!-- HERO: ranking por estado -->
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <div class="hero-badge">★ Ranking por estado</div>
+        <h2 id="tRank">Gasto por estado</h2>
+        <p class="desc" id="dRank">Clique em um estado no mapa ou na barra para filtrar o painel inteiro.</p>
+      </div>
+      <div class="ctrls">
+        <div class="seg" id="segMetric">
+          <button data-v="valor" class="on">Gasto (R$)</button>
+          <button data-v="litros" id="bVol">Litros</button>
+          <button data-v="preco" id="bPreco">R$/L</button>
+        </div>
+        <div class="seg" id="segUF">
+          <button data-v="obra" class="on">UF da obra</button>
+          <button data-v="forn">UF do fornecedor</button>
+        </div>
+      </div>
+    </div>
+    <div class="hero-grid">
+      <div id="chMapa" role="img" aria-label="Mapa do Brasil com gasto por estado"></div>
+      <div id="chRankUF" role="img" aria-label="Ranking de estados em barras"></div>
+    </div>
+  </section>
+
+  <div class="grid2" id="secIns" style="display:none">
+    <section class="card">
+      <div class="card-head"><div><h2>Comparativo entre insumos</h2><p class="desc">Gasto e participação de cada insumo · clique para filtrar</p></div></div>
+      <div class="ch" id="chIns" style="height:340px"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><div><h2 id="tInsMes">Preço médio por mês, por insumo</h2><p class="desc">Média ponderada pelo volume de cada insumo</p></div></div>
+      <div class="legend" id="lgIns"></div>
+      <div class="ch" id="chInsMes" style="height:310px"></div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <div class="card-head"><div><h2>Gasto por mês</h2><p class="desc">Mês da cotação · valor total comprado</p></div></div>
+      <div class="ch" id="chMes"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><div><h2 id="tPrecoMes">Preço médio do litro por mês</h2><p class="desc">Média ponderada pelo volume · faixa sombreada = menor e maior preço pago</p></div></div>
+      <div class="ch" id="chPrecoMes"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-head"><div><h2>Onde o preço é mais alto</h2><p class="desc"><span class="un-txt">Preço por litro</span> em cada UF da obra: faixa do menor ao maior preço pago e ponto na média ponderada · linha = média geral</p></div></div>
+    <div class="ch" id="chPrecoUF" style="height:400px"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <div class="card-head"><div><h2>Top 10 obras por gasto</h2><p class="desc">Clique em uma barra para filtrar pela obra</p></div></div>
+      <div class="ch" id="chObras" style="height:400px"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><div><h2>Top 10 fornecedores</h2><p class="desc">Gasto e participação no total · clique para filtrar</p></div></div>
+      <div class="ch" id="chForn" style="height:400px"></div>
+    </section>
+  </div>
+
+  <div class="grid3">
+    <section class="card">
+      <div class="card-head"><div><h2>Frete CIF × FOB</h2><p class="desc">Comparativo de preço e volume</p></div></div>
+      <div id="frete"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><div><h2>Preço × tamanho do pedido</h2><p class="desc" id="dFaixa">R$/L médio por faixa de litros por compra</p></div></div>
+      <div class="ch" id="chFaixa" style="height:280px"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><div><h2>Comprado de outra UF</h2><p class="desc">Fornecedor em estado diferente da obra</p></div></div>
+      <div id="fluxos"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-head">
+      <div><h2>Economia potencial</h2>
+        <p class="desc">Quanto se pagou acima do <b>menor preço registrado para o mesmo insumo, na mesma UF e no mesmo mês</b>. É uma referência de negociação: distância e logística da obra podem justificar parte da diferença.</p></div>
+    </div>
+    <div class="tbl-wrap" style="max-height:420px"><table id="tbOp"></table></div>
+  </section>
+
+  <section class="card no-pdf">
+    <div class="card-head">
+      <div><h2>Detalhamento das compras</h2><p class="desc" id="dTab">—</p></div>
+      <div class="tools">
+        <input type="search" id="busca" placeholder="Buscar obra, fornecedor, processo…">
+        <button class="btn-pri" id="btnCsv">Exportar CSV</button>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table id="tb"></table></div>
+    <div class="tbl-foot"><span id="tbInfo"></span><button class="btn-ghost" id="btnMais">Mostrar mais</button></div>
+  </section>
+
+  <div class="notes" id="notes"></div>
+</div>
+<div class="toast" id="toast"><div class="spin"></div><span id="toastTxt">Gerando PDF…</span></div>
+
+<script>
+/* ======================= DADOS ======================= */
+const D = /*__DADOS__*/null;
+const XLSX_B64 = /*__XLSX__*/null;
+const GEO = /*__GEO__*/null;
+echarts.registerMap('BR', GEO);
+const NOME_UF = Object.fromEntries(GEO.features.map(f => [f.properties.name, f.properties.nome]));
+
+const UN = D.meta.unidade || 'L';
+const EH_LITRO = UN === 'L';
+const pU = '/' + UN;
+const VOL = EH_LITRO ? 'Litros' : 'Quantidade';
+const PRECO_TXT = EH_LITRO ? 'Preço médio do litro' : 'Preço médio por ' + UN;
+const REGS = D.regs.map(r => ({...r, mes: r.dCot ? r.dCot.slice(0,7) : '—', isL: r.unid === UN}));
+const INSUMOS = D.meta.insumos || [];
+const MULTI = INSUMOS.length > 1;
+const titulo = s => String(s||'').toLowerCase().replace(/(^|[\s/(-])([a-zà-ú])/g, (m,a,b) => a + b.toUpperCase())
+  .replace(/\bS\d+\b/gi, m => m.toUpperCase());
+const INS_NOME = Object.fromEntries(INSUMOS.map(i => [i.cod, i.desc ? titulo(i.desc) : i.cod]));
+const INS_SLOT = Object.fromEntries(INSUMOS.map((i, n) => [i.cod, n]));   // cor segue o insumo, nunca o ranking
+function mesesEntre(a, b) { const out = []; let [y,m] = a.split('-').map(Number); const [yb,mb] = b.split('-').map(Number);
+  while (y < yb || (y === yb && m <= mb)) { out.push(`${y}-${String(m).padStart(2,'0')}`); m++; if (m > 12) { m = 1; y++; } } return out; }
+const P = D.meta.periodo;
+const MESES = P ? mesesEntre(P.ini.slice(0,7), P.fim.slice(0,7)) : [...new Set(REGS.map(r => r.mes))].filter(m => m !== '—').sort();
+const MES_NOME = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const fmtMes = m => { const [y,mm] = m.split('-'); return MES_NOME[+mm-1] + '/' + y.slice(2); };
+
+/* menor preço por UF+mês (base completa) — referência da economia potencial */
+const MIN_REF = {};
+for (const r of REGS) if (r.isL) {
+  const k = r.ins + '|' + r.ufObra + '|' + r.mes;
+  if (!(k in MIN_REF) || r.preco < MIN_REF[k]) MIN_REF[k] = r.preco;
+}
+
+/* ======================= FORMATOS ======================= */
+const nf = (d=0) => new Intl.NumberFormat('pt-BR',{minimumFractionDigits:d, maximumFractionDigits:d});
+const brl = v => 'R$ ' + nf(2).format(v);
+const brl0 = v => 'R$ ' + nf(0).format(v);
+const brlC = v => { const a = Math.abs(v);
+  if (a >= 1e6) return 'R$ ' + nf(2).format(v/1e6) + ' mi';
+  if (a >= 1e3) return 'R$ ' + nf(0).format(v/1e3) + ' mil';
+  return 'R$ ' + nf(0).format(v); };
+const litC = v => { if (v >= 1e6) return nf(2).format(v/1e6) + ' mi ' + UN; if (v >= 1e3) return nf(0).format(v/1e3) + ' mil ' + UN; return nf(0).format(v) + ' ' + UN; };
+const lit = v => nf(0).format(v) + ' ' + UN;
+const pL = v => v == null ? '—' : 'R$ ' + nf(3).format(v);
+const pct = (v,d=1) => nf(d).format(v*100) + '%';
+const fmtData = s => s ? s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4) : '—';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ======================= ESTADO ======================= */
+const F = { de: MESES[0], ate: MESES[MESES.length-1], uf:'', ufForn:'', obra:'', forn:'', frete:'', ins:'' };
+let METRIC = 'valor', UFMODE = 'obra';
+
+function filtrar(skip = []) {
+  return REGS.filter(r =>
+    (skip.includes('periodo') || (r.mes >= F.de && r.mes <= F.ate)) &&
+    (skip.includes('uf') || !F.uf || r.ufObra === F.uf) &&
+    (skip.includes('ufForn') || !F.ufForn || r.ufForn === F.ufForn) &&
+    (skip.includes('obra') || !F.obra || String(r.obraCod) === F.obra) &&
+    (skip.includes('forn') || !F.forn || r.fornFull === F.forn) &&
+    (skip.includes('frete') || !F.frete || r.frete === F.frete) &&
+    (skip.includes('ins') || !F.ins || r.ins === F.ins));
+}
+function agg(rows, keyFn) {
+  const m = new Map();
+  for (const r of rows) {
+    const k = keyFn(r); if (k == null) continue;
+    let a = m.get(k);
+    if (!a) { a = {k, valor:0, litros:0, valorL:0, n:0, min:Infinity, max:-Infinity, rows:[]}; m.set(k, a); }
+    a.valor += r.valor; a.n++; a.rows.push(r);
+    if (r.isL) { a.litros += r.qtd; a.valorL += r.valor; a.min = Math.min(a.min, r.preco); a.max = Math.max(a.max, r.preco); }
+  }
+  for (const a of m.values()) a.preco = a.litros ? a.valorL / a.litros : null;
+  return [...m.values()];
+}
+function totais(rows) {
+  const t = {valor:0, litros:0, valorL:0, n:rows.length, min:Infinity, max:-Infinity};
+  for (const r of rows) { t.valor += r.valor; if (r.isL) { t.litros += r.qtd; t.valorL += r.valor; t.min = Math.min(t.min,r.preco); t.max = Math.max(t.max,r.preco);} }
+  t.preco = t.litros ? t.valorL / t.litros : null;
+  return t;
+}
+const excesso = r => r.isL ? Math.max(0, (r.preco - (MIN_REF[r.ins+'|'+r.ufObra+'|'+r.mes] ?? r.preco)) * r.qtd) : 0;
+
+/* ======================= TEMA ======================= */
+let C = {};
+function lerCores() {
+  const cs = getComputedStyle(document.documentElement), g = n => cs.getPropertyValue(n).trim();
+  C = { bg:g('--bg'), surface:g('--surface'), surface2:g('--surface-2'), border:g('--border'), grid:g('--grid'),
+        text:g('--text'), text2:g('--text-2'), muted:g('--muted'), s1:g('--s1'), s2:g('--s2'), s3:g('--s3'),
+        seq:[g('--seq0'),g('--seq1'),g('--seq2'),g('--seq3'),g('--seq4')], empty:g('--empty'),
+        cat:[1,2,3,4,5,6,7,8].map(i => g('--c'+i)) };
+}
+const FONT = '"Plus Jakarta Sans", system-ui, sans-serif';
+const tt = (extra={}) => Object.assign({
+  backgroundColor:C.surface2, borderColor:C.border, borderWidth:1, padding:[9,12],
+  textStyle:{color:C.text, fontFamily:FONT, fontSize:12},
+  extraCssText:'border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.14);'
+}, extra);
+const axisTxt = () => ({color:C.muted, fontFamily:FONT, fontSize:11});
+const valAxis = (extra={}) => Object.assign({type:'value', axisLine:{show:false}, axisTick:{show:false},
+  splitLine:{lineStyle:{color:C.grid, width:1}}, axisLabel:axisTxt()}, extra);
+const catAxis = (extra={}) => Object.assign({type:'category', axisLine:{lineStyle:{color:C.border}}, axisTick:{show:false},
+  axisLabel:axisTxt()}, extra);
+const ttRow = (label, val, cor) => `<div style="display:flex;justify-content:space-between;gap:18px;margin-top:3px">
+  <span style="color:${C.text2}">${cor?`<i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${cor};margin-right:6px"></i>`:''}${label}</span>
+  <b style="font-variant-numeric:tabular-nums">${val}</b></div>`;
+const ttHead = t => `<div style="font-weight:700;margin-bottom:4px;max-width:340px;white-space:normal">${esc(t)}</div>`;
+
+/* ======================= CHARTS ======================= */
+const CH = {};
+['chMapa','chRankUF','chMes','chPrecoMes','chPrecoUF','chObras','chForn','chFaixa','chIns','chInsMes'].forEach(id => {
+  CH[id] = echarts.init(document.getElementById(id), null, {renderer:'canvas'});
+});
+window.addEventListener('resize', () => Object.values(CH).forEach(c => c.resize()));
+
+const metricVal = a => METRIC === 'valor' ? a.valor : METRIC === 'litros' ? a.litros : a.preco;
+const metricFmt = v => METRIC === 'valor' ? brlC(v) : METRIC === 'litros' ? litC(v) : pL(v);
+const METRIC_TXT = {valor:'Gasto', litros: EH_LITRO ? 'Litros comprados' : 'Quantidade comprada', preco: PRECO_TXT};
+
+function renderRanking() {
+  const skip = UFMODE === 'obra' ? ['uf'] : ['ufForn'];
+  const rows = filtrar(skip);
+  const key = UFMODE === 'obra' ? (r => r.ufObra) : (r => r.ufForn);
+  const sel = UFMODE === 'obra' ? F.uf : F.ufForn;
+  let ufs = agg(rows, key).filter(a => metricVal(a) != null);
+  const tot = rows.reduce((s,r) => s + r.valor, 0);
+  ufs.sort((a,b) => metricVal(b) - metricVal(a));
+
+  document.getElementById('tRank').textContent = `${METRIC_TXT[METRIC]} por estado · ${UFMODE === 'obra' ? 'UF da obra' : 'UF do fornecedor'}`;
+
+  const vals = ufs.map(metricVal);
+  const vmin = METRIC === 'preco' ? Math.min(...vals) : 0, vmax = Math.max(...vals, 1);
+
+  const ttUF = a => ttHead(`${NOME_UF[a.k] || a.k} (${a.k})`) +
+      ttRow('Gasto', brl0(a.valor)) + ttRow('Participação', pct(a.valor / (tot||1))) +
+      ttRow(VOL, lit(a.litros)) + ttRow('Preço médio', pL(a.preco) + pU) +
+      ttRow('Compras', a.n) + ttRow('Obras', new Set(a.rows.map(r => r.obraCod)).size);
+  const byK = Object.fromEntries(ufs.map(a => [a.k, a]));
+
+  CH.chMapa.setOption({
+    tooltip: tt({trigger:'item', formatter: p => byK[p.name] ? ttUF(byK[p.name]) : `${NOME_UF[p.name]||p.name}<br><span style="color:${C.muted}">Sem compras no filtro</span>`}),
+    visualMap: { type:'continuous', min:vmin, max:vmax, inRange:{color:C.seq}, calculable:false, orient:'horizontal',
+      left:'center', bottom:4, itemWidth:10, itemHeight:180, text:['maior','menor'], textGap:8,
+      textStyle:{color:C.muted, fontFamily:FONT, fontSize:11}, formatter: v => metricFmt(v), seriesIndex:0 },
+    series: [{
+      type:'map', map:'BR', nameProperty:'name', roam:false, top:6, bottom:48, left:'center', aspectScale:0.9,
+      selectedMode:false,
+      itemStyle:{areaColor:C.empty, borderColor:C.surface, borderWidth:1},
+      label:{show:true, fontSize:9.5, fontFamily:FONT, fontWeight:600, color:C.text, textBorderColor:C.surface, textBorderWidth:2,
+        formatter: p => byK[p.name] ? p.name : ''},
+      emphasis:{label:{show:true}, itemStyle:{areaColor:C.s2, borderColor:C.surface}},
+      data: ufs.map(a => ({name:a.k, value:metricVal(a),
+        itemStyle: sel ? (a.k === sel ? {borderColor:C.text, borderWidth:2} : {opacity:.45}) : undefined}))
+    }]
+  }, true);
+
+  const n = ufs.length;
+  CH.chRankUF.setOption({
+    grid:{left:8, right:120, top:6, bottom:6, containLabel:true},
+    tooltip: tt({trigger:'item', formatter: p => ttUF(byK[p.name])}),
+    xAxis: valAxis({show:false, min: METRIC === 'preco' ? Math.floor(vmin*0.97*10)/10 : 0}),
+    yAxis: catAxis({data: ufs.map(a => a.k), inverse:true, axisLine:{show:false},
+      axisLabel:{color:C.text, fontFamily:FONT, fontSize:12, fontWeight:600,
+        formatter: (v,i) => `{r|${i+1}º}  ${v}`, rich:{r:{color:C.muted, fontSize:11, width:22, align:'right'}}}}),
+    series:[{type:'bar', barWidth: Math.max(8, Math.min(18, 300/Math.max(n,1))), barCategoryGap:'30%',
+      data: ufs.map(a => ({value:metricVal(a), name:a.k,
+        itemStyle:{color:C.s1, borderRadius:[0,4,4,0], opacity: sel && a.k !== sel ? .35 : 1}})),
+      label:{show:true, position:'right', distance:8, fontFamily:FONT, fontSize:11.5, color:C.text2,
+        formatter: p => METRIC === 'valor' ? `{v|${brlC(p.value)}}  {s|${pct(byK[p.name].valor/(tot||1),0)}}` : metricFmt(p.value),
+        rich:{v:{color:C.text, fontWeight:700, fontFamily:FONT, fontSize:11.5}, s:{color:C.muted, fontFamily:FONT, fontSize:11}}},
+      emphasis:{itemStyle:{color:C.s2}}
+    }]
+  }, true);
+}
+
+function toggleUF(uf) {
+  if (UFMODE === 'obra') F.uf = F.uf === uf ? '' : uf; else F.ufForn = F.ufForn === uf ? '' : uf;
+  syncSelects(); renderAll();
+}
+CH.chMapa.on('click', p => { if (p.value != null && !isNaN(p.value)) toggleUF(p.name); });
+CH.chRankUF.on('click', p => toggleUF(p.name));
+
+function renderMeses(rows) {
+  const ms = MESES.filter(m => m >= F.de && m <= F.ate);
+  const by = Object.fromEntries(agg(rows, r => r.mes).map(a => [a.k, a]));
+  const data = ms.map(m => by[m] || {valor:0, litros:0, preco:null, n:0, min:null, max:null});
+  const maxV = Math.max(...data.map(a => a.valor));
+  CH.chMes.setOption({
+    grid:{left:6, right:10, top:28, bottom:4, containLabel:true},
+    tooltip: tt({trigger:'axis', axisPointer:{type:'shadow', shadowStyle:{color:C.grid, opacity:.6}},
+      formatter: ps => { const a = data[ps[0].dataIndex]; return ttHead(fmtMes(ms[ps[0].dataIndex])) +
+        ttRow('Gasto', brl0(a.valor)) + ttRow(VOL, lit(a.litros)) + ttRow('Preço médio', pL(a.preco)+pU) + ttRow('Compras', a.n); }}),
+    xAxis: catAxis({data: ms.map(fmtMes)}),
+    yAxis: valAxis({axisLabel:{...axisTxt(), formatter: v => brlC(v).replace('R$ ','')}}),
+    series:[{type:'bar', barMaxWidth:46, data: data.map(a => ({value:a.valor,
+        itemStyle:{color: a.valor === maxV ? C.s1 : C.seq[1], borderRadius:[4,4,0,0]}})),
+      label:{show:true, position:'top', fontFamily:FONT, fontSize:11, color:C.text2, formatter: p => brlC(p.value)}}]
+  }, true);
+
+  const avg = data.map(a => a.preco), lo = data.map(a => a.litros ? a.min : null), hi = data.map(a => a.litros ? a.max : null);
+  const tg = totais(rows).preco;
+  CH.chPrecoMes.setOption({
+    grid:{left:6, right:30, top:28, bottom:4, containLabel:true},
+    tooltip: tt({trigger:'axis', axisPointer:{type:'line', lineStyle:{color:C.muted}},
+      formatter: ps => { const i = ps[0].dataIndex, a = data[i]; return ttHead(fmtMes(ms[i])) +
+        ttRow('Média ponderada', pL(a.preco), C.s1) + ttRow('Menor preço', pL(lo[i])) + ttRow('Maior preço', pL(hi[i])); }}),
+    xAxis: catAxis({data: ms.map(fmtMes), boundaryGap:false}),
+    yAxis: valAxis({scale:true, axisLabel:{...axisTxt(), formatter: v => nf(2).format(v)}}),
+    series:[
+      {type:'line', data: lo, stack:'faixa', lineStyle:{opacity:0}, symbol:'none', silent:true},
+      {type:'line', data: hi.map((h,i) => h == null ? null : h - lo[i]), stack:'faixa', lineStyle:{opacity:0}, symbol:'none',
+        areaStyle:{color:C.s1, opacity:.12}, silent:true},
+      {type:'line', data: avg, symbol:'circle', symbolSize:8, lineStyle:{width:2, color:C.s1},
+        itemStyle:{color:C.s1, borderColor:C.surface, borderWidth:2},
+        label:{show:true, position:'top', fontFamily:FONT, fontSize:11, color:C.text, fontWeight:600, formatter: p => nf(3).format(p.value)},
+        markLine: tg ? {symbol:'none', silent:true, lineStyle:{color:C.muted, type:'solid', width:1},
+          label:{formatter:'média do período ' + nf(3).format(tg), color:C.muted, fontFamily:FONT, fontSize:10.5, position:'insideEndBottom'},
+          data:[{yAxis:tg}]} : undefined}
+    ]
+  }, true);
+}
+
+function renderPrecoUF(rows) {
+  const ufs = agg(rows.filter(r => r.isL), r => r.ufObra).sort((a,b) => b.preco - a.preco);
+  const tg = totais(rows).preco;
+  const lo = Math.min(...ufs.map(a => a.min)), hi = Math.max(...ufs.map(a => a.max));
+  CH.chPrecoUF.setOption({
+    grid:{left:8, right:90, top:26, bottom:8, containLabel:true},
+    tooltip: tt({trigger:'axis', axisPointer:{type:'shadow', shadowStyle:{color:C.grid, opacity:.5}},
+      formatter: ps => { const a = ufs[ps[0].dataIndex]; const d = tg ? a.preco/tg - 1 : 0;
+        return ttHead(`${NOME_UF[a.k]||a.k} (${a.k})`) + ttRow('Média ponderada', pL(a.preco)+pU, C.s1) +
+          ttRow('vs. média geral', (d>=0?'+':'') + pct(d)) + ttRow('Menor preço', pL(a.min)) + ttRow('Maior preço', pL(a.max)) +
+          ttRow(VOL, lit(a.litros)); }}),
+    xAxis: valAxis({min: Math.floor(lo*10)/10 - 0.1, max: Math.ceil(hi*10)/10 + 0.1,
+      axisLabel:{...axisTxt(), formatter: v => 'R$ ' + nf(2).format(v)}}),
+    yAxis: catAxis({data: ufs.map(a => a.k), inverse:true, axisLine:{show:false},
+      axisLabel:{color:C.text, fontFamily:FONT, fontSize:12, fontWeight:600}}),
+    series:[
+      {type:'bar', stack:'r', data: ufs.map(a => a.min), itemStyle:{color:'transparent'}, silent:true, barWidth:8},
+      {type:'bar', stack:'r', data: ufs.map(a => Math.max(a.max - a.min, 0.004)), barWidth:8,
+        itemStyle:{color:C.seq[1], borderRadius:4, opacity:.75},
+        label:{show:true, position:'right', distance:10, fontFamily:FONT, fontSize:11.5, color:C.text, fontWeight:600,
+          formatter: p => pL(ufs[p.dataIndex].preco)}},
+      {type:'scatter', data: ufs.map(a => a.preco), symbolSize:13,
+        itemStyle:{color:C.s1, borderColor:C.surface, borderWidth:2},
+        markLine: tg ? {symbol:'none', silent:true, lineStyle:{color:C.s2, type:'solid', width:1.5},
+          label:{formatter:'média geral ' + pL(tg), color:C.text2, fontFamily:FONT, fontSize:11, position:'start', distance:6},
+          data:[{xAxis:tg}]} : undefined}
+    ]
+  }, true);
+}
+
+function hbar(chart, list, total, fmtLabelExtra) {
+  chart.setOption({
+    grid:{left:8, right:110, top:6, bottom:6, containLabel:true},
+    tooltip: tt({trigger:'item', formatter: p => { const a = list[p.dataIndex];
+      return ttHead(a.full) + ttRow('Gasto', brl0(a.valor)) + ttRow('Participação', pct(a.valor/(total||1))) +
+        ttRow(VOL, lit(a.litros)) + ttRow('Preço médio', pL(a.preco)+pU) + ttRow('Compras', a.n) + (a.extra||''); }}),
+    xAxis: valAxis({show:false}),
+    yAxis: catAxis({data: list.map(a => a.label), inverse:true, axisLine:{show:false},
+      axisLabel:{color:C.text, fontFamily:FONT, fontSize:11.5, width:210, overflow:'truncate'}}),
+    series:[{type:'bar', barWidth:14, data: list.map(a => ({value:a.valor,
+        itemStyle:{color:C.s1, borderRadius:[0,4,4,0], opacity: a.dim ? .35 : 1}})),
+      label:{show:true, position:'right', distance:8, fontFamily:FONT,
+        formatter: p => `{v|${brlC(p.value)}}  {s|${pct(list[p.dataIndex].valor/(total||1),0)}}`,
+        rich:{v:{color:C.text, fontWeight:700, fontFamily:FONT, fontSize:11.5}, s:{color:C.muted, fontFamily:FONT, fontSize:11}}},
+      emphasis:{itemStyle:{color:C.s2}}}]
+  }, true);
+}
+let OBRAS_LIST = [], FORN_LIST = [];
+function renderObrasForn() {
+  const ro = filtrar(['obra']), to = ro.reduce((s,r) => s+r.valor, 0);
+  OBRAS_LIST = agg(ro, r => r.obraCod).sort((a,b) => b.valor-a.valor).slice(0,10).map(a => ({...a,
+    label: a.rows[0].obra, full: `${a.rows[0].obraFull} (obra ${a.k})`, dim: F.obra && String(a.k) !== F.obra,
+    extra: ttRow('UF', a.rows[0].ufObra)}));
+  hbar(CH.chObras, OBRAS_LIST, to);
+
+  const rf = filtrar(['forn']), tf = rf.reduce((s,r) => s+r.valor, 0);
+  FORN_LIST = agg(rf, r => r.fornFull).sort((a,b) => b.valor-a.valor).slice(0,10).map(a => ({...a,
+    label: a.rows[0].forn, full: a.k, dim: F.forn && a.k !== F.forn,
+    extra: ttRow('UF', [...new Set(a.rows.map(r => r.ufForn))].join(', ')) + ttRow('Obras atendidas', new Set(a.rows.map(r => r.obraCod)).size)}));
+  hbar(CH.chForn, FORN_LIST, tf);
+}
+CH.chObras.on('click', p => { const k = String(OBRAS_LIST[p.dataIndex].k); F.obra = F.obra === k ? '' : k; syncSelects(); renderAll(); });
+CH.chForn.on('click', p => { const k = FORN_LIST[p.dataIndex].k; F.forn = F.forn === k ? '' : k; syncSelects(); renderAll(); });
+
+function renderFrete() {
+  const rows = filtrar(['frete']);
+  const by = Object.fromEntries(agg(rows, r => r.frete).map(a => [a.k, a]));
+  const cif = by.CIF || {valor:0, litros:0, preco:null, n:0}, fob = by.FOB || {valor:0, litros:0, preco:null, n:0};
+  const tl = (cif.litros + fob.litros) || 1;
+  const side = (nome, a, cor, desc) => `<div class="side"><span class="tag"><i style="background:${cor}"></i>${nome}</span>
+    <div class="big">${pL(a.preco)}<span style="font-size:13px;color:var(--text-2);font-weight:600">${pU}</span></div>
+    <div class="small">${desc}<br>${litC(a.litros)} · ${brlC(a.valor)}<br>${a.n} compras</div></div>`;
+  let msg = '';
+  if (cif.preco && fob.preco) {
+    const d = fob.preco - cif.preco;
+    msg = `<div class="callout">No ${d < 0 ? '<b>FOB</b>' : '<b>CIF</b>'} o litro saiu <b>${pL(Math.abs(d))}</b> mais barato em média
+      (${pct(Math.abs(d)/Math.max(cif.preco,fob.preco))}). No FOB a retirada/transporte é por conta da obra — compare com o custo do frete próprio.</div>`;
+  }
+  document.getElementById('frete').innerHTML = `<div class="cmp">
+      ${side('CIF', cif, C.s1, 'Entrega pelo fornecedor')}${side('FOB', fob, C.s2, 'Retirada pela obra')}</div>
+    <div class="share"><span style="width:${cif.litros/tl*100}%;background:${C.s1}"></span><span style="width:${fob.litros/tl*100}%;background:${C.s2}"></span></div>
+    <div class="share-lg"><span>CIF ${pct(cif.litros/tl,0)} do volume</span><span>FOB ${pct(fob.litros/tl,0)}</span></div>${msg}`;
+}
+
+const FAIXAS = [{nome:'até 5 mil', a:0, b:5000}, {nome:'5–10 mil', a:5000, b:10000.001}, {nome:'10–20 mil', a:10000.001, b:20000.001}, {nome:'> 20 mil', a:20000.001, b:Infinity}];
+function renderFaixa(rows) {
+  const L = rows.filter(r => r.isL);
+  const data = FAIXAS.map(f => { const rs = L.filter(r => r.qtd >= f.a && r.qtd < f.b); const t = totais(rs); return {...f, ...t, n: rs.length}; });
+  const vs = data.filter(d => d.preco).map(d => d.preco);
+  CH.chFaixa.setOption({
+    grid:{left:6, right:8, top:28, bottom:4, containLabel:true},
+    tooltip: tt({trigger:'axis', axisPointer:{type:'shadow', shadowStyle:{color:C.grid, opacity:.6}},
+      formatter: ps => { const d = data[ps[0].dataIndex]; return ttHead(`Compras de ${d.nome} ${UN}`) +
+        ttRow('Preço médio', pL(d.preco)+pU) + ttRow('Compras', d.n) + ttRow(VOL, lit(d.litros)); }}),
+    xAxis: catAxis({data: data.map(d => d.nome), axisLabel:{...axisTxt(), interval:0, fontSize:10.5}}),
+    yAxis: valAxis({scale:true, min: vs.length ? Math.floor(Math.min(...vs)*10)/10 - 0.1 : 0, axisLabel:{...axisTxt(), formatter: v => nf(2).format(v)}}),
+    series:[{type:'bar', barMaxWidth:44, data: data.map(d => ({value:d.preco, itemStyle:{color:C.s1, borderRadius:[4,4,0,0]}})),
+      label:{show:true, position:'top', fontFamily:FONT, fontSize:11, color:C.text, fontWeight:600, formatter: p => p.value ? nf(3).format(p.value) : ''}}]
+  }, true);
+}
+
+function renderFluxos(rows) {
+  const ext = rows.filter(r => r.ufForn && r.ufObra && r.ufForn !== r.ufObra);
+  const tot = rows.reduce((s,r) => s+r.valor, 0), te = ext.reduce((s,r) => s+r.valor, 0);
+  const fl = agg(ext, r => r.ufForn + '→' + r.ufObra).sort((a,b) => b.valor-a.valor);
+  const mx = fl.length ? fl[0].valor : 1;
+  document.getElementById('fluxos').innerHTML = !fl.length ? '<div class="empty">Todas as compras do filtro são de fornecedores da mesma UF da obra.</div>' :
+    `<div style="display:flex;gap:18px;align-items:baseline;margin:2px 0 8px">
+       <div><div style="font-size:22px;font-weight:800" class="num">${brlC(te)}</div><div style="font-size:12px;color:var(--text-2)">${pct(te/(tot||1))} do gasto · ${ext.length} compras</div></div></div>
+     <div class="flows">${fl.slice(0,7).map(a => { const [o,d] = a.k.split('→'); return `<div class="flow" title="${esc(NOME_UF[o]||o)} → ${esc(NOME_UF[d]||d)} · ${pL(a.preco)}${pU}">
+       <div class="uf">${o} <span>→</span> ${d}</div>
+       <div class="bar-bg"><div class="bar" style="width:${Math.max(3,a.valor/mx*100)}%"></div></div>
+       <div class="v">${brlC(a.valor)}</div></div>`; }).join('')}</div>
+     <div class="callout">Ex.: obras do Amapá abastecidas por fornecedores do Pará e obras do Amazonas por Rondônia — vale checar se há fornecedor local competitivo.</div>`;
+  // ajusta o callout com o maior fluxo real
+  if (fl.length) {
+    const [o,d] = fl[0].k.split('→');
+    document.querySelector('#fluxos .callout').innerHTML = `Maior fluxo: <b>${NOME_UF[o]||o} → ${NOME_UF[d]||d}</b> (${brlC(fl[0].valor)}, ${pL(fl[0].preco)}${pU}). Vale checar se há fornecedor local competitivo.`;
+  }
+}
+
+/* ======================= INSUMOS ======================= */
+const corIns = cod => { const n = INS_SLOT[cod]; return n != null && n < 8 ? C.cat[n] : C.muted; };
+let INS_LIST = [];
+function renderInsumos() {
+  if (!MULTI) return;
+  const rows = filtrar(['ins']), tot = rows.reduce((s,r) => s + r.valor, 0);
+  INS_LIST = agg(rows, r => r.ins).sort((a,b) => b.valor - a.valor);
+  CH.chIns.setOption({
+    grid:{left:8, right:110, top:6, bottom:6, containLabel:true},
+    tooltip: tt({trigger:'item', formatter: p => { const a = INS_LIST[p.dataIndex];
+      return ttHead(`${a.k} · ${INS_NOME[a.k]}`) + ttRow('Gasto', brl0(a.valor)) + ttRow('Participação', pct(a.valor/(tot||1))) +
+        ttRow(VOL, lit(a.litros)) + ttRow('Preço médio', pL(a.preco) + pU) + ttRow('Compras', a.n) +
+        ttRow('Obras', new Set(a.rows.map(r => r.obraCod)).size); }}),
+    xAxis: valAxis({show:false}),
+    yAxis: catAxis({data: INS_LIST.map(a => a.k), inverse:true, axisLine:{show:false},
+      axisLabel:{color:C.text, fontFamily:FONT, fontSize:11.5, fontWeight:600, width:230, overflow:'truncate', lineHeight:16,
+        formatter: v => INS_NOME[v] && INS_NOME[v] !== v ? `${v}\n{d|${INS_NOME[v]}}` : v,
+        rich:{d:{color:C.muted, fontSize:10.5, fontFamily:FONT, fontWeight:400, width:230, overflow:'truncate'}}}}),
+    series:[{type:'bar', barMaxWidth:18, data: INS_LIST.map(a => ({value:a.valor,
+        itemStyle:{color:corIns(a.k), borderRadius:[0,4,4,0], opacity: F.ins && F.ins !== a.k ? .35 : 1}})),
+      label:{show:true, position:'right', distance:8, fontFamily:FONT,
+        formatter: p => `{v|${brlC(p.value)}}  {s|${pct(INS_LIST[p.dataIndex].valor/(tot||1),0)}}`,
+        rich:{v:{color:C.text, fontWeight:700, fontFamily:FONT, fontSize:11.5}, s:{color:C.muted, fontFamily:FONT, fontSize:11}}}}]
+  }, true);
+
+  const ms = MESES.filter(m => m >= F.de && m <= F.ate);
+  const lista = INSUMOS.filter(i => INS_SLOT[i.cod] < 8 && rows.some(r => r.ins === i.cod && r.isL));
+  const series = lista.map(i => {
+    const by = Object.fromEntries(agg(rows.filter(r => r.ins === i.cod && r.isL), r => r.mes).map(a => [a.k, a.preco]));
+    return {type:'line', name:i.cod, data: ms.map(m => by[m] ?? null), connectNulls:true, symbol:'circle', symbolSize:8,
+      lineStyle:{width:2, color:corIns(i.cod)}, itemStyle:{color:corIns(i.cod), borderColor:C.surface, borderWidth:2},
+      endLabel: lista.length <= 4 ? {show:true, formatter: p => p.value != null ? nf(3).format(p.value) : '', color:C.text,
+        fontFamily:FONT, fontSize:11, fontWeight:600} : undefined,
+      emphasis:{focus:'series'}};
+  });
+  $('lgIns').innerHTML = lista.map(i => `<span><i style="background:${corIns(i.cod)}"></i>${esc(i.cod)}${INS_NOME[i.cod] !== i.cod ? ' · ' + esc(INS_NOME[i.cod]) : ''}</span>`).join('');
+  CH.chInsMes.setOption({
+    grid:{left:6, right:56, top:12, bottom:4, containLabel:true},
+    tooltip: tt({trigger:'axis', axisPointer:{type:'line', lineStyle:{color:C.muted}},
+      formatter: ps => ttHead(fmtMes(ms[ps[0].dataIndex])) + ps.filter(p => p.value != null)
+        .sort((a,b) => b.value - a.value).map(p => ttRow(p.seriesName, pL(p.value) + pU, p.color)).join('')}),
+    xAxis: catAxis({data: ms.map(fmtMes), boundaryGap:false}),
+    yAxis: valAxis({scale:true, axisLabel:{...axisTxt(), formatter: v => nf(2).format(v)}}),
+    series
+  }, true);
+}
+CH.chIns.on('click', p => { const k = INS_LIST[p.dataIndex].k; F.ins = F.ins === k ? '' : k; syncSelects(); renderAll(); });
+
+function renderAviso(rows) {
+  const n = new Set(rows.filter(r => r.isL).map(r => r.ins)).size;
+  const el = $('aviso');
+  if (MULTI && !F.ins && n > 1) {
+    el.style.display = '';
+    el.innerHTML = `<span>⚠</span><span>Os preços médios e rankings de preço abaixo juntam <b>${n} insumos</b>. Para comparar preço de forma justa, escolha um insumo no filtro <b>Insumo</b> ou clique no gráfico <b>Comparativo entre insumos</b>.</span>`;
+  } else el.style.display = 'none';
+}
+
+/* ======================= KPIs + INSIGHTS ======================= */
+function renderKPIs(rows) {
+  const t = totais(rows);
+  const obras = new Set(rows.map(r => r.obraCod)).size, forn = new Set(rows.map(r => r.fornFull)).size;
+  const ufs = new Set(rows.map(r => r.ufObra)).size, procs = new Set(rows.map(r => r.proc)).size;
+  const econ = rows.reduce((s,r) => s + excesso(r), 0);
+  const ms = agg(rows.filter(r => r.isL), r => r.mes).sort((a,b) => a.k < b.k ? -1 : 1);
+  let dP = '';
+  if (ms.length >= 2) { const d = ms[ms.length-1].preco / ms[0].preco - 1;
+    dP = `<span class="delta ${d>0?'up':'down'}">${d>0?'▲':'▼'} ${pct(Math.abs(d))}</span> de ${fmtMes(ms[0].k)} a ${fmtMes(ms[ms.length-1].k)}`; }
+  const nL = rows.filter(r => r.isL).length;
+  const k = (lbl, val, sub, cls='') => `<div class="kpi ${cls}"><div class="lbl"><i></i>${lbl}</div><div class="val">${val}</div><div class="sub">${sub}</div></div>`;
+  document.getElementById('kpis').innerHTML =
+    k('Gasto total', brlC(t.valor), `${rows.length} compras · ${new Set(rows.map(r => r.mes)).size} meses`) +
+    k('Volume comprado', litC(t.litros), `média de ${lit(nL ? t.litros/nL : 0)} por compra`) +
+    k(PRECO_TXT, `${pL(t.preco)}<small>${pU}</small>`, dP || `de ${pL(t.min)} a ${pL(t.max)}`) +
+    k('Obras atendidas', obras, `${ufs} estados · ${forn} fornecedores`) +
+    k('Economia potencial', brlC(econ), `${pct(econ/(t.valor||1))} do gasto · se cada compra saísse pelo menor preço da UF no mês`, 'accent');
+}
+function renderInsights(rows) {
+  const tot = rows.reduce((s,r) => s+r.valor, 0) || 1;
+  const ufs = agg(rows, r => r.ufObra).sort((a,b) => b.valor-a.valor);
+  const totL = rows.reduce((s,r) => s + (r.isL ? r.qtd : 0), 0);
+  const pu = agg(rows.filter(r => r.isL), r => r.ufObra).filter(a => a.litros > 0 && a.litros >= totL*0.01).sort((a,b) => b.preco-a.preco);
+  const tg = totais(rows).preco;
+  const ms = agg(rows, r => r.mes).sort((a,b) => b.valor-a.valor);
+  const fs = agg(rows, r => r.fornFull).sort((a,b) => b.valor-a.valor);
+  const top3 = fs.slice(0,3).reduce((s,a) => s+a.valor, 0);
+  const ic = p => `<div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg></div>`;
+  const I = [];
+  if (ufs.length) { const top2 = ufs.slice(0,2).reduce((s,a)=>s+a.valor,0);
+    I.push(ic('<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>') +
+    `<div><b>${NOME_UF[ufs[0].k]||ufs[0].k}</b> lidera com <b>${pct(ufs[0].valor/tot)}</b> do gasto${ufs.length>1?`; com ${ufs[1].k} chega a ${pct(top2/tot,0)}`:''}.</div>`); }
+  if (pu.length > 1) { const a = pu[0], b = pu[pu.length-1];
+    I.push(ic('<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>') +
+    `<div>Litro mais caro em <b>${a.k}</b> (${pL(a.preco)}, ${a.preco>=tg?'+':''}${pct(a.preco/tg-1)} vs média) e mais barato em <b>${b.k}</b> (${pL(b.preco)}).</div>`); }
+  if (ms.length) I.push(ic('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>') +
+    `<div>Mês de maior gasto: <b>${fmtMes(ms[0].k)}</b> com <b>${brlC(ms[0].valor)}</b> (${pct(ms[0].valor/tot,0)} do período).</div>`);
+  if (fs.length) I.push(ic('<path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/>') +
+    `<div>Os <b>3 maiores fornecedores</b> concentram <b>${pct(top3/tot)}</b> do gasto; o 1º é ${esc(fs[0].rows[0].forn)}.</div>`);
+  document.getElementById('insights').innerHTML = I.map(x => `<div class="ins">${x}</div>`).join('');
+}
+
+/* ======================= TABELAS ======================= */
+function renderOportunidades(rows) {
+  const ops = rows.filter(r => r.isL).map(r => ({r, ex: excesso(r), ref: MIN_REF[r.ins+'|'+r.ufObra+'|'+r.mes]}))
+    .filter(o => o.ex > 0.5).sort((a,b) => b.ex - a.ex).slice(0, 12);
+  const tb = document.getElementById('tbOp');
+  if (!ops.length) { tb.innerHTML = '<tbody><tr><td class="empty">Nenhuma diferença relevante no filtro atual.</td></tr></tbody>'; return; }
+  tb.innerHTML = `<thead><tr><th>Mês</th><th>UF</th><th>Obra</th><th>Fornecedor</th><th class="r">${VOL}</th><th class="r">Pago R$${pU}</th><th class="r">Menor da UF</th><th class="r">Acima (R$)</th></tr></thead>
+  <tbody>${ops.map(o => `<tr><td>${fmtMes(o.r.mes)}${MULTI ? `<br><span style="color:var(--muted);font-size:11px">${esc(o.r.ins)}</span>` : ''}</td><td><span class="pill">${o.r.ufObra}</span></td>
+    <td class="obra" title="${esc(o.r.obraFull)}">${esc(o.r.obra)}</td><td class="forn" title="${esc(o.r.fornFull)}">${esc(o.r.forn)}</td>
+    <td class="r">${nf(0).format(o.r.qtd)}</td><td class="r">${nf(3).format(o.r.preco)}</td><td class="r">${nf(3).format(o.ref)}</td>
+    <td class="r diff">${brl0(o.ex)}</td></tr>`).join('')}</tbody>`;
+}
+
+const COLS = [
+  ...(MULTI ? [{k:'ins', t:'Insumo', f: r => `<span title="${esc(INS_NOME[r.ins])}">${esc(r.ins)}</span>`}] : []),
+  {k:'dCot', t:'Cotação', f: r => fmtData(r.dCot)},
+  {k:'proc', t:'Processo', f: r => r.proc, r:1},
+  {k:'obra', t:'Obra', f: r => `<span title="${esc(r.obraFull)}">${esc(r.obra)}</span>`, cls:'obra'},
+  {k:'ufObra', t:'UF obra', f: r => `<span class="pill">${r.ufObra}</span>`},
+  {k:'forn', t:'Fornecedor', f: r => `<span title="${esc(r.fornFull)}">${esc(r.forn)}</span>`, cls:'forn'},
+  {k:'ufForn', t:'UF forn.', f: r => r.ufForn || '—'},
+  {k:'frete', t:'Frete', f: r => r.frete},
+  {k:'qtd', t:'Qtde', f: r => nf(r.isL?0:0).format(r.qtd) + ' ' + r.unid, r:1},
+  {k:'preco', t:'Preço unit.', f: r => r.isL ? nf(3).format(r.preco) : nf(2).format(r.preco), r:1},
+  {k:'valor', t:'Total', f: r => brl(r.valor), r:1},
+];
+let SORT = {k:'dCot', dir:-1}, LIMITE = 50, TAB_ROWS = [];
+function renderTabela(rows) {
+  const q = document.getElementById('busca').value.trim().toLowerCase();
+  TAB_ROWS = rows.filter(r => !q || [r.ins, INS_NOME[r.ins], r.obraFull, r.fornFull, r.proc, r.ufObra, r.ufForn, r.emp].join(' ').toLowerCase().includes(q));
+  TAB_ROWS.sort((a,b) => { const x = a[SORT.k], y = b[SORT.k]; return (x > y ? 1 : x < y ? -1 : 0) * SORT.dir; });
+  const tot = TAB_ROWS.reduce((s,r) => s+r.valor, 0);
+  document.getElementById('tb').innerHTML = `<thead><tr>${COLS.map(c => `<th data-k="${c.k}" class="${c.r?'r':''}">${c.t}${SORT.k===c.k?`<span class="arr">${SORT.dir>0?'↑':'↓'}</span>`:''}</th>`).join('')}</tr></thead>
+    <tbody>${TAB_ROWS.slice(0, LIMITE).map(r => `<tr>${COLS.map(c => `<td class="${c.r?'r':''} ${c.cls||''}">${c.f(r)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  document.getElementById('tbInfo').textContent = `Mostrando ${Math.min(LIMITE, TAB_ROWS.length)} de ${TAB_ROWS.length} compras · total ${brl(tot)}`;
+  document.getElementById('btnMais').style.display = TAB_ROWS.length > LIMITE ? '' : 'none';
+  document.getElementById('dTab').textContent = 'Clique no cabeçalho para ordenar · passe o mouse no nome para ver completo';
+  document.querySelectorAll('#tb th').forEach(th => th.onclick = () => {
+    const k = th.dataset.k; SORT = {k, dir: SORT.k === k ? -SORT.dir : (['valor','qtd','preco','dCot','proc'].includes(k) ? -1 : 1)}; renderTabela(filtrar());
+  });
+}
+document.getElementById('busca').addEventListener('input', () => { LIMITE = 50; renderTabela(filtrar()); });
+document.getElementById('btnMais').onclick = () => { LIMITE += 100; renderTabela(filtrar()); };
+document.getElementById('btnCsv').onclick = () => {
+  const head = ['Insumo','Data cotacao','Processo','Cotacao','Cod obra','Obra','UF obra','Fornecedor','UF fornecedor','Frete','Unidade','Quantidade','Preco unitario','Total'];
+  const lines = TAB_ROWS.map(r => [r.ins, r.dCot, r.proc, r.cot, r.obraCod, r.obraFull, r.ufObra, r.fornFull, r.ufForn||'', r.frete, r.unid,
+    nf(3).format(r.qtd).replace(/\./g,''), nf(4).format(r.preco).replace(/\./g,''), nf(2).format(r.valor).replace(/\./g,'')]
+    .map(v => `"${String(v).replace(/"/g,'""')}"`).join(';'));
+  const blob = new Blob(['﻿' + [head.join(';'), ...lines].join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'compras_' + (F.ins || INSUMOS.map(i => i.cod).join('_')).replace(/[^\w.-]+/g,'_') + '.csv'; document.body.appendChild(a); a.click(); a.remove();
+};
+
+/* ======================= FILTROS ======================= */
+const $ = id => document.getElementById(id);
+function popularSelects() {
+  $('fIns').innerHTML = '<option value="">Todos os insumos</option>' + INSUMOS.map(i => `<option value="${esc(i.cod)}">${esc(i.cod)}${i.desc ? ' · ' + esc(INS_NOME[i.cod]) : ''}</option>`).join('');
+  $('boxIns').style.display = MULTI ? '' : 'none';
+  $('fDe').innerHTML = MESES.map(m => `<option value="${m}">${fmtMes(m)}</option>`).join('');
+  $('fAte').innerHTML = $('fDe').innerHTML;
+  const ufs = [...new Set(REGS.map(r => r.ufObra))].sort();
+  $('fUF').innerHTML = '<option value="">Todas</option>' + ufs.map(u => `<option value="${u}">${u} · ${NOME_UF[u]||''}</option>`).join('');
+  const obras = [...new Map(REGS.map(r => [r.obraCod, r])).values()].sort((a,b) => a.obra.localeCompare(b.obra));
+  $('fObra').innerHTML = '<option value="">Todas as obras</option>' + obras.map(r => `<option value="${r.obraCod}">${esc(r.obra)}</option>`).join('');
+  const forns = [...new Map(REGS.map(r => [r.fornFull, r])).values()].sort((a,b) => a.forn.localeCompare(b.forn));
+  $('fForn').innerHTML = '<option value="">Todos os fornecedores</option>' + forns.map(r => `<option value="${esc(r.fornFull)}">${esc(r.forn)}</option>`).join('');
+}
+function syncSelects() { $('fIns').value = F.ins; $('fDe').value = F.de; $('fAte').value = F.ate; $('fUF').value = F.uf; $('fObra').value = F.obra; $('fForn').value = F.forn; $('fFrete').value = F.frete; }
+[['fIns','ins'],['fDe','de'],['fAte','ate'],['fUF','uf'],['fObra','obra'],['fForn','forn'],['fFrete','frete']].forEach(([id,k]) =>
+  $(id).addEventListener('change', e => { F[k] = e.target.value;
+    if (F.de > F.ate) { if (k === 'de') F.ate = F.de; else F.de = F.ate; syncSelects(); }
+    LIMITE = 50; renderAll(); }));
+$('btnLimpar').onclick = () => { Object.assign(F, {de:MESES[0], ate:MESES[MESES.length-1], uf:'', ufForn:'', obra:'', forn:'', frete:'', ins:''}); $('busca').value=''; syncSelects(); renderAll(); };
+
+function renderChips() {
+  const c = [];
+  if (F.de !== MESES[0] || F.ate !== MESES[MESES.length-1]) c.push(['periodo', `Período: ${fmtMes(F.de)} a ${fmtMes(F.ate)}`]);
+  if (F.uf) c.push(['uf', `UF da obra: ${F.uf}`]);
+  if (F.ufForn) c.push(['ufForn', `UF do fornecedor: ${F.ufForn}`]);
+  if (F.obra) c.push(['obra', `Obra: ${REGS.find(r => String(r.obraCod) === F.obra)?.obra}`]);
+  if (F.forn) c.push(['forn', `Fornecedor: ${REGS.find(r => r.fornFull === F.forn)?.forn}`]);
+  if (F.frete) c.push(['frete', `Frete: ${F.frete}`]);
+  if (F.ins) c.push(['ins', `Insumo: ${F.ins} · ${INS_NOME[F.ins]}`]);
+  $('chips').innerHTML = c.map(([k,t]) => `<span class="chip">${esc(t)}<button data-k="${k}" aria-label="Remover filtro">×</button></span>`).join('');
+  $('chips').querySelectorAll('button').forEach(b => b.onclick = () => { const k = b.dataset.k;
+    if (k === 'periodo') { F.de = MESES[0]; F.ate = MESES[MESES.length-1]; } else F[k] = ''; syncSelects(); renderAll(); });
+}
+
+function segInit(id, cb) { $(id).querySelectorAll('button').forEach(b => b.onclick = () => {
+  $(id).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); cb(b.dataset.v); }); }
+segInit('segMetric', v => { METRIC = v; renderRanking(); });
+segInit('segUF', v => { UFMODE = v; renderRanking(); });
+
+/* ======================= TEMA ======================= */
+$('btnTema').onclick = () => {
+  const root = document.documentElement;
+  const atualEscuro = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = atualEscuro ? 'light' : 'dark';
+  try { localStorage.setItem('painelDieselTema', root.dataset.theme); } catch(e) {}
+  lerCores(); renderAll();
+};
+try { const t = localStorage.getItem('painelDieselTema'); if (t) document.documentElement.dataset.theme = t; } catch(e) {}
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (!document.documentElement.dataset.theme) { lerCores(); renderAll(); } });
+
+
+/* ======================= DOWNLOADS ======================= */
+const NOME_ARQ = (D.meta.arquivo || 'painel_compras');
+function baixarBlob(blob, nome) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function toast(txt, ms) {
+  $('toastTxt').textContent = txt; $('toast').classList.add('on');
+  $('toast').querySelector('.spin').style.display = ms ? 'none' : '';
+  if (ms) setTimeout(() => $('toast').classList.remove('on'), ms);
+}
+$('btnXlsx').style.display = XLSX_B64 ? '' : 'none';
+$('btnXlsx').onclick = () => {
+  const bin = atob(XLSX_B64), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  baixarBlob(new Blob([bytes], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}), NOME_ARQ + '.xlsx');
+  toast('Excel baixado', 2200);
+};
+
+const espera = ms => new Promise(r => setTimeout(r, ms));
+$('btnPdf').onclick = async () => {
+  const btn = $('btnPdf'); btn.disabled = true; toast('Gerando PDF… isso leva alguns segundos');
+  const root = document.documentElement, temaAnt = root.dataset.theme;
+  try {
+    // PDF sempre no tema claro e com largura fixa, para sair igual em qualquer tela
+    const nomeObra = F.obra ? REGS.find(r => String(r.obraCod) === F.obra)?.obra : '';
+    const nomeForn = F.forn ? REGS.find(r => r.fornFull === F.forn)?.forn : '';
+    $('pdfFiltros').innerHTML = '<b>Filtros aplicados:</b> ' + [
+      `período ${fmtMes(F.de)} a ${fmtMes(F.ate)}`,
+      MULTI ? `insumo: ${F.ins ? esc(F.ins + ' · ' + INS_NOME[F.ins]) : 'todos'}` : '',
+      `UF da obra: ${F.uf || 'todas'}`, F.ufForn ? `UF do fornecedor: ${F.ufForn}` : '',
+      `obra: ${nomeObra ? esc(nomeObra) : 'todas'}`, `fornecedor: ${nomeForn ? esc(nomeForn) : 'todos'}`,
+      `frete: ${F.frete || 'todos'}`].filter(Boolean).join(' · ');
+    root.dataset.theme = 'light'; document.body.classList.add('pdf-mode');
+    lerCores(); renderAll(); await espera(60);
+    Object.values(CH).forEach(c => c.resize());
+    await espera(1300);                                  // fim das animações dos gráficos
+    const alvo = document.querySelector('.app');
+    const W = alvo.offsetWidth, H = alvo.offsetHeight;
+    // pontos de corte = início/fim de cada bloco, para não partir cards no meio
+    const topo = alvo.getBoundingClientRect().top, cortes = [0, H];
+    alvo.querySelectorAll(':scope > *, :scope > .grid2 > .card, :scope > .grid3 > .card').forEach(el => {
+      if (el.offsetParent === null) return;
+      const r = el.getBoundingClientRect(); cortes.push(r.top - topo - 8, r.bottom - topo + 4);
+    });
+    const pontos = [...new Set(cortes.map(v => Math.max(0, Math.min(H, Math.round(v)))))].sort((a,b) => a-b);
+
+    const canvas = await htmlToImage.toCanvas(alvo, {pixelRatio: 2, backgroundColor: '#f2f2ef', width: W, height: H});
+    const k = canvas.width / W;
+    const pdf = new jspdf.jsPDF({orientation:'portrait', unit:'pt', format:'a4', compress:true});
+    const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+    const mg = 18, rodape = 16, lu = pw - 2*mg, au = ph - 2*mg - rodape;
+    const pagPx = au / lu * W;
+    const paginas = []; let ini = 0;
+    while (ini < H - 2) {
+      const lim = ini + pagPx;
+      let fim = Math.max(...pontos.filter(p => p > ini + 40 && p <= lim));
+      if (!isFinite(fim) || fim <= ini) fim = Math.min(H, lim);
+      paginas.push([ini, fim]); ini = fim;
+    }
+    const agora = new Date().toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'});
+    paginas.forEach(([a, b], i) => {
+      const fatia = document.createElement('canvas');
+      fatia.width = canvas.width; fatia.height = Math.round((b - a) * k);
+      const ctx = fatia.getContext('2d'); ctx.fillStyle = '#f2f2ef'; ctx.fillRect(0, 0, fatia.width, fatia.height);
+      ctx.drawImage(canvas, 0, Math.round(a * k), canvas.width, fatia.height, 0, 0, canvas.width, fatia.height);
+      if (i) pdf.addPage();
+      pdf.setFillColor(242, 242, 239); pdf.rect(0, 0, pw, ph, 'F');
+      pdf.addImage(fatia.toDataURL('image/jpeg', 0.92), 'JPEG', mg, mg, lu, (b - a) / W * lu);
+      pdf.setFontSize(8); pdf.setTextColor(124, 123, 118);
+      pdf.text(`${$('titulo').textContent} · LCM Construção · gerado em ${agora}`, mg, ph - mg + 2);
+      pdf.text(`Página ${i + 1} de ${paginas.length}`, pw - mg, ph - mg + 2, {align:'right'});
+    });
+    pdf.save(NOME_ARQ + '.pdf');
+    toast('PDF baixado', 2200);
+  } catch (e) {
+    console.error(e); toast('Não consegui gerar o PDF: ' + (e && e.message || e), 6000);
+  } finally {
+    document.body.classList.remove('pdf-mode');
+    if (temaAnt) root.dataset.theme = temaAnt; else delete root.dataset.theme;
+    lerCores(); renderAll(); await espera(60); Object.values(CH).forEach(c => c.resize());
+    btn.disabled = false;
+  }
+};
+
+/* ======================= RENDER ======================= */
+function renderAll() {
+  const rows = filtrar();
+  renderChips(); renderAviso(rows); renderKPIs(rows); renderInsumos(); renderInsights(rows); renderRanking(); renderMeses(rows);
+  renderPrecoUF(rows); renderObrasForn(); renderFrete(); renderFaixa(rows); renderFluxos(rows);
+  renderOportunidades(rows); renderTabela(rows);
+  ajustarAltura();
+}
+function ajustarAltura() {
+  requestAnimationFrame(() => {
+    const h = Math.ceil(document.documentElement.scrollHeight) + 4;
+    try { window.parent.postMessage({isStreamlitMessage:true, type:'streamlit:setFrameHeight', height:h}, '*'); } catch(e) {}
+  });
+}
+new ResizeObserver(ajustarAltura).observe(document.body);
+
+const datas = REGS.map(r => r.dCot).filter(Boolean).sort();
+$('sub').textContent = `${INSUMOS.map(i => i.cod).join(', ')} · cotações de ${fmtData(P ? P.ini : datas[0])} a ${fmtData(P ? P.fim : datas[datas.length-1])} · ${REGS.length} compras · fonte: ${D.meta.fonte || 'planilha'}`;
+$('titulo').textContent = MULTI ? `Comparativo de ${INSUMOS.length} insumos` : INS_NOME[INSUMOS[0]?.cod] || 'Compras';
+document.title = $('titulo').textContent + ' · Compras';
+$('bVol').textContent = EH_LITRO ? 'Litros' : 'Quantidade';
+$('bPreco').textContent = 'R$' + pU;
+$('tPrecoMes').textContent = PRECO_TXT + ' por mês';
+document.querySelectorAll('.un-txt').forEach(e => e.textContent = EH_LITRO ? 'Preço por litro' : 'Preço por ' + UN);
+$('dFaixa').textContent = `R$${pU} médio por faixa de quantidade por compra`;
+$('secIns').style.display = MULTI ? '' : 'none';
+$('notes').innerHTML = `<b>Notas:</b> ${D.meta.escala > 1 ? `preço e quantidade convertidos da escala da planilha (÷ ${nf(0).format(D.meta.escala)}). ` : ''}Preço médio = total pago ÷ ${EH_LITRO ? 'litros' : 'quantidade'} (média ponderada pelo volume).
+  ${D.meta.outrasUnid ? `${D.meta.outrasUnid} item(ns) em outra unidade (ex.: verba) entram no gasto, mas não no volume nem no preço médio. ` : ''}
+  ${D.meta.ufInferidas ? `${D.meta.ufInferidas} linha(s) sem UF da obra tiveram o estado identificado pelo nome da obra. ` : ''}
+  Mês = mês da data de cotação. Frete: tipo 0 = CIF, tipo 1 = FOB.`;
+
+lerCores(); popularSelects(); syncSelects(); renderAll();
+</script>
+</body>
+</html>
