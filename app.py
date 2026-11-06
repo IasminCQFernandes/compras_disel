@@ -16,7 +16,7 @@ import io
 import json
 import math
 import re
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import logging
@@ -43,6 +43,20 @@ if sys.platform == "win32":
 BASE = Path(__file__).parent
 ASSETS = BASE / "assets"
 PLANILHA_PADRAO = BASE / "diesel.xlsx"
+
+# Horário de Brasília. No Windows o Python não traz a base de fusos (precisa do pacote tzdata);
+# se não houver, usa UTC-3 fixo (o Brasil não tem horário de verão desde 2019).
+try:
+    from zoneinfo import ZoneInfo
+
+    FUSO = ZoneInfo("America/Sao_Paulo")
+except Exception:  # noqa: BLE001
+    FUSO = timezone(timedelta(hours=-3), "BRT")
+
+
+def agora() -> datetime:
+    return datetime.now(FUSO)
+
 
 UFS = {
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA",
@@ -210,11 +224,12 @@ ORDER BY TAB.Data_cot DESC
 
 
 @st.cache_data(ttl=600, show_spinner=False)
-def historico_do_banco(codigos: tuple[str, ...], ini: date, fim: date) -> pd.DataFrame:
+def historico_do_banco(codigos: tuple[str, ...], ini: date, fim: date) -> tuple[pd.DataFrame, datetime]:
     usuario = st.secrets["uau"].get("usuario_uau", "IASMIN")
     params = [usuario, *codigos, datetime.combine(ini, datetime.min.time()),
               datetime.combine(fim + timedelta(days=1), datetime.min.time())]
-    return _executar(_sql_historico(len(codigos)), params, timeout=300)
+    # devolve também a hora da consulta, para o "atualizado às" não mentir quando vier do cache
+    return _executar(_sql_historico(len(codigos)), params, timeout=300), agora()
 
 
 # ============================================================================
@@ -403,7 +418,7 @@ def gerar_xlsx(df_bruto: pd.DataFrame, regs: list[dict], meta: dict, ini: date, 
         info = pd.DataFrame({"Campo": ["Relatório", "Insumos", "Período (data da cotação)", "Registros", "Gerado em"],
                              "Valor": ["Painel de Compras por Insumo — LCM Construção",
                                        ", ".join(f"{c} · {d}" if d else c for c, d in desc.items()),
-                                       f"{ini:%d/%m/%Y} a {fim:%d/%m/%Y}", len(r), f"{datetime.now():%d/%m/%Y %H:%M}"]})
+                                       f"{ini:%d/%m/%Y} a {fim:%d/%m/%Y}", len(r), f"{agora():%d/%m/%Y %H:%M}"]})
         info.to_excel(xw, sheet_name="Sobre", index=False)
         for nome, d in abas.items():
             d.to_excel(xw, sheet_name=nome[:31], index=False)
@@ -482,7 +497,7 @@ def buscar_insumos(termo: str) -> pd.DataFrame:
     return pd.DataFrame({"Cod": cods[m], "Descr": "", "Unid": ""}).head(LIMITE_BUSCA + 1)
 
 
-hoje = date.today()
+hoje = agora().date()
 ini_padrao = (hoje.replace(day=1) - pd.DateOffset(months=6)).date()
 # Nada é consultado ao abrir: o painel só carrega depois que o usuário escolhe e clica em "Carregar".
 st.session_state.setdefault("params", None)
@@ -615,12 +630,15 @@ codigos, ini, fim = params
 with st.container(key="barra_status"):
     try:
         with st.spinner("Consultando o histórico de compras no UAU… (pode levar alguns segundos)" if usar_banco else "Lendo a planilha…"):
-            df = historico_do_banco(codigos, ini, fim) if usar_banco else filtrar_planilha(df_planilha, codigos, ini, fim)
+            if usar_banco:
+                df, consultado_em = historico_do_banco(codigos, ini, fim)
+            else:
+                df, consultado_em = filtrar_planilha(df_planilha, codigos, ini, fim), agora()
     except Exception as e:  # noqa: BLE001
         st.error(f"Erro ao consultar o banco: {e}")
         st.stop()
     st.caption(f"Fonte: **{fonte}** · {len(df)} registros · {', '.join(codigos)} · "
-               f"{ini:%d/%m/%Y} a {fim:%d/%m/%Y} · atualizado às {datetime.now():%H:%M}")
+               f"{ini:%d/%m/%Y} a {fim:%d/%m/%Y} · consultado em {consultado_em:%d/%m/%Y às %H:%M} (Brasília)")
 
 def _usar_codigo(cod: str, ini_: date, fim_: date) -> None:
     st.session_state.params = ((cod,), ini_, fim_)
